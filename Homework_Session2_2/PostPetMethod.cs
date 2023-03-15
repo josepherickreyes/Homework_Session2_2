@@ -51,8 +51,9 @@ namespace HomeWork_Session2_2
             //Create New Pet
             var newPet = new PetModel()
             {
-                Id = 0,
-                PetName = "Mr.Pickles",
+                Id = 99,
+                Name = "Mr.Pickles",
+                Category = new PetCategory  { Name = "Poodle" },
                 PhotoUrls = new string[] { "photo " },
                 Tags = new PetCategory[] { new PetCategory { Name = "Tags" } },
                 Status = "available"
@@ -61,18 +62,22 @@ namespace HomeWork_Session2_2
             // Send Post Request
             var temp = GetURI(PetEndpoint);
             var postRestRequest = new RestRequest(GetURI(PetEndpoint)).AddJsonBody(newPet);
-            var restResponse = await restClient.ExecutePostAsync(postRestRequest);
+            var postRestResponse = await restClient.ExecutePostAsync(postRestRequest);
             #endregion
 
             // Verify Post Request Status Code
-            Assert.AreEqual(HttpStatusCode.OK, restResponse.StatusCode, "Status Code is not equal to 200");
+            Assert.AreEqual(HttpStatusCode.OK, postRestResponse.StatusCode, "Status Code is not equal to 200");
 
             // Send Get Request
-            var getRestRequest = new RestRequest(GetURI($"{PetEndpoint}/{newPet.Id}"));
-            var getRestResponse = await restClient.ExecuteGetAsync<PetModel>(getRestRequest);
 
-            Assert.AreEqual(newPet.Status, getRestResponse.Data.Status, "Status Code is not equal to 200");
-            Assert.AreEqual(newPet.PetName, getRestResponse.Data.PetName, "Name did not Match");
+         
+            var getRestRequest = new RestRequest(GetURI($"{PetEndpoint}/{newPet.Id}"), Method.Get);
+            var getRestResponse = await restClient.ExecuteAsync<PetModel>(getRestRequest);
+
+
+            Assert.AreEqual(HttpStatusCode.OK, getRestResponse.StatusCode, "Status code is not equal to 200");
+     
+            Assert.AreEqual(newPet.Name, getRestResponse.Data.Name, "Name did not Match");
             Assert.AreEqual(newPet.Category.Name, getRestResponse.Data.Category.Name, "Category did not Match");
             Assert.AreEqual(newPet.PhotoUrls[0], getRestResponse.Data.PhotoUrls[0], "PhotoUrls not found");
             Assert.AreEqual(newPet.Tags[0].Name, getRestResponse.Data.Tags[0].Name, "tags not found");
