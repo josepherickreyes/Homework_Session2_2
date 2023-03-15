@@ -16,7 +16,8 @@ namespace HomeWork_Session2_2
         public PetCategory Category { get; set; }
 
         [JsonProperty("name")]
-        public string Name { get; set; }
+        public string PetName { get; set; }
+
 
         [JsonProperty("photoUrls")]
         public string[] PhotoUrls { get; set; }
